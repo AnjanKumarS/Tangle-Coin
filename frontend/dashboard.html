@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TangleCoinD - Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .wallet-item {
+            background-color: #eee;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 6px;
+            text-align: left;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: #d9534f;
+        }
+
+         /* Navbar Styling */
+        .navbar {
+            background-color: #333;
+            padding: 14px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .navbar a:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="index.html">🏠 Home</a>
+        <a href="wallet.html">🔗 Wallet</a>
+        <a href="transaction.html">💸 Transactions</a>
+        <a href="dashboard.html">📊 Dashboard</a>
+        <a href="dag.html">🔗 DAG Visualization</a>
+    </div>
+
+    <h1>TangleCoinD Dashboard</h1>
+    <div class="container">
+        <button onclick="getAllWallets()">Load Wallets</button>
+        <div class="wallet-list" id="walletList"></div>
+        <div class="message" id="dashboardMessage"></div>
+    </div>
+
+    <script>
+        const baseURL = 'http://127.0.0.1:5000';
+
+            async function getAllWallets() {
+                try {
+                    const response = await fetch(`${baseURL}/get_all_wallets`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP Error! Status: ${response.status}`);
+                    }
+                    const wallets = await response.json();
+
+                    const walletList = document.getElementById('walletList');
+                    const messageDiv = document.getElementById('dashboardMessage');
+                    walletList.innerHTML = '';
+
+                    if (!wallets || wallets.length === 0) {
+                        messageDiv.innerText = 'No wallets found.';
+                        return;
+                    }
+
+                    wallets.forEach(wallet => {
+                        const walletDiv = document.createElement('div');
+                        walletDiv.className = 'wallet-item';
+                        walletDiv.innerHTML = `
+                <strong>Owner:</strong> ${wallet.owner} <br>
+                <strong>Balance:</strong> ${wallet.balance ? wallet.balance.toFixed(2) : '0.00'} Coins
+            `;
+                        walletList.appendChild(walletDiv);
+                    });
+
+                    messageDiv.innerText = '';
+                } catch (error) {
+                    document.getElementById('dashboardMessage').innerText = 'Error: ' + error.message;
+                }
+            }
+
+    </script>
+</body>
+
+</html>

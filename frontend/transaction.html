@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TangleCoinD - Transactions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            text-align: center;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: #d9534f;
+        }
+
+        .transactions {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            font-size: 14px;
+        }
+
+         /* Navbar Styling */
+        .navbar {
+            background-color: #333;
+            padding: 14px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .navbar a:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="index.html">🏠 Home</a>
+        <a href="wallet.html">🔗 Wallet</a>
+        <a href="transaction.html">💸 Transactions</a>
+        <a href="dashboard.html">📊 Dashboard</a>
+        <a href="dag.html">🔗 DAG Visualization</a>
+    </div>
+
+    <h1>TangleCoinD - Transactions</h1>
+    <div class="container">
+        <input type="text" id="sender" placeholder="Sender Wallet" />
+        <input type="text" id="receiver" placeholder="Receiver Wallet" />
+        <input type="number" id="amount" placeholder="Amount" />
+        <button onclick="sendTransaction()">Send Transaction</button>
+        <button onclick="getTransactions()">Get Transaction History</button>
+
+        <div class="message" id="transactionMessage"></div>
+        <div class="transactions" id="transactionHistory"></div>
+    </div>
+
+    <script>
+        const baseURL = 'http://127.0.0.1:5000';
+
+            // Send Transaction
+            async function sendTransaction() {
+                const sender = document.getElementById('sender').value;
+                const receiver = document.getElementById('receiver').value;
+                const amount = parseFloat(document.getElementById('amount').value);
+                const messageDiv = document.getElementById('transactionMessage');
+
+                if (!sender || !receiver || isNaN(amount) || amount <= 0) {
+                    messageDiv.innerText = 'Please fill all fields correctly.';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${baseURL}/add_transaction`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ sender, receiver, amount })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        messageDiv.innerText = 'Transaction successful!';
+                        getTransactions(); // Refresh transaction history
+                    } else {
+                        messageDiv.innerText = data.error || 'Failed to send transaction.';
+                    }
+                } catch (error) {
+                    messageDiv.innerText = 'Error: ' + error.message;
+                }
+            }
+    // Get Transaction History
+    async function getTransactions() {
+        const messageDiv = document.getElementById('transactionMessage');
+        const transactionHistoryDiv = document.getElementById('transactionHistory');
+        transactionHistoryDiv.innerHTML = '';
+
+        try {
+            const response = await fetch(`${baseURL}/get_transactions`);
+            const data = await response.json();
+
+            if (response.ok) {
+                if (data.length === 0) {
+                    messageDiv.innerText = 'No transactions found.';
+                    return;
+                }
+
+                data.forEach(tx => {
+                    const transactionItem = document.createElement('div');
+                    transactionItem.innerHTML = `
+                    <strong>Sender:</strong> ${tx.sender} <br>
+                    <strong>Receiver:</strong> ${tx.receiver} <br>
+                    <strong>Amount:</strong> ${tx.amount} <br>
+                    <hr>
+                `;
+                    transactionHistoryDiv.appendChild(transactionItem);
+                });
+
+                messageDiv.innerText = '';
+            } else {
+                messageDiv.innerText = data.error || 'Failed to fetch transactions.';
+            }
+        } catch (error) {
+            messageDiv.innerText = 'Error: ' + error.message;
+        }
+    }
+
+    </script>
+</body>
+
+</html>

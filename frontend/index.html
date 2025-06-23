@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TangleCoinD - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #333;
+            padding: 14px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .navbar a:hover {
+            background-color: #555;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 100px auto 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #555;
+            text-align: justify;
+        }
+
+        /* Button Styling */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            width: 150px;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        @media (max-width: 600px) {
+            .btn {
+                width: 100%;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="index.html">🏠 Home</a>
+        <a href="wallet.html">🔗 Wallet</a>
+        <a href="transaction.html">💸 Transactions</a>
+        <a href="dashboard.html">📊 Dashboard</a>
+        <a href="dag.html">🔗 DAG Visualization</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>TangleCoinD - Blockchain Simulation</h1>
+        <p>
+            TangleCoinD is a secure and scalable cryptocurrency platform using a combination of **Directed Acyclic Graph
+            (DAG)** and **Merkle Trees** for efficient transaction processing.
+            <br><br>
+            Key Features:
+        <ul>
+            <li><b>Merkle Trees:</b> Ensures secure transaction verification using SHA-256 hashing.</li>
+            <li><b>DAG:</b> Enables parallel transaction processing, increasing scalability and reducing congestion.
+            </li>
+            <li><b>Proof of Stake (PoS):</b> Used for validator selection to maintain network integrity and reduce
+                energy consumption.</li>
+            <li><b>Fast Transaction Speed:</b> DAG architecture supports simultaneous transaction confirmations,
+                improving performance.</li>
+        </ul>
+        </p>
+    </div>
+
+</body>
+
+</html>

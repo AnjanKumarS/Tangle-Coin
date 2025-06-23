@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TangleCoinD - Wallet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 70px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            text-align: center;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: #d9534f;
+        }
+
+        .balance {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #5cb85c;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #333;
+            padding: 14px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .navbar a:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="index.html">🏠 Home</a>
+        <a href="wallet.html">🔗 Wallet</a>
+        <a href="transaction.html">💸 Transactions</a>
+        <a href="dashboard.html">📊 Dashboard</a>
+        <a href="dag.html">🔗 DAG Visualization</a>
+    </div>
+
+    <h1>TangleCoinD Wallet</h1>
+    <div class="container">
+        <input type="text" id="walletOwner" placeholder="Enter Wallet Owner" />
+        <input type="number" id="walletBalanceInput" placeholder="Initial Balance" />
+        <button onclick="createWallet()">Create Wallet</button>
+        <button onclick="getWallet()">Get Wallet Info</button>
+        <div class="balance" id="walletBalance"></div>
+        <div class="message" id="walletMessage"></div>
+    </div>
+
+    <script>
+        const baseURL = 'http://127.0.0.1:5000';
+
+            // ✅ Create wallet with initial balance
+            async function createWallet() {
+                const owner = document.getElementById('walletOwner').value.trim();
+                const balance = document.getElementById('walletBalanceInput').value.trim();
+                const messageDiv = document.getElementById('walletMessage');
+
+                if (!owner || balance === "") {
+                    messageDiv.innerText = 'Please enter wallet owner and initial balance.';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${baseURL}/create_wallet`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ owner, balance: parseFloat(balance) })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        messageDiv.innerText = data.message;
+                        document.getElementById('walletBalanceInput').value = '';
+                    } else {
+                        messageDiv.innerText = data.error;
+                    }
+                } catch (error) {
+                    messageDiv.innerText = 'Error: ' + error.message;
+                }
+            }
+
+            // ✅ Get wallet info (balance for a specific owner)
+            async function getWalletInfo() {
+                const owner = document.getElementById('walletOwner').value.trim();
+                const balanceDiv = document.getElementById('walletBalance');
+                const messageDiv = document.getElementById('walletMessage');
+
+                if (!owner) {
+                    messageDiv.innerText = 'Please enter an owner name.';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${baseURL}/get_wallet_balance?owner=${encodeURIComponent(owner)}`);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP Error! Status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        balanceDiv.innerText = data.error;
+                    } else {
+                        balanceDiv.innerHTML = `<strong>Owner:</strong> ${data.owner} <br>
+                                    <strong>Balance:</strong> ${parseFloat(data.balance).toFixed(2)} Coins`;
+                    }
+                } catch (error) {
+                    console.error("Wallet Info Fetch Error:", error);
+                    balanceDiv.innerText = 'Error: ' + error.message;
+                }
+            }
+
+    </script>
+</body>
+
+</html>
